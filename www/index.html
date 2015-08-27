@@ -12,20 +12,44 @@ var o="";
 for (var y=0;y<16;y++) {
   o=o+"<tr>"
   for (var x=0;x<16;x++) {
-    o=o+"<td></td>";
+    o=o+"<td id='"+x+"_"+y+"'></td>";
   }
   o=o+"</tr>";
 }
 o="<table cellpadding=0 cellspacing=0>"+o+"</table>"
 $("#grid").html(o);
 
-$(window).bind("mousedown", function() {mousebutton=1;});
-$(window).bind("mouseup", function() {mousebutton=0;});
+$(window).bind("mousedown", function() {mousebutton=1; $("#mb").html(mousebutton);});
+$(window).bind("mouseup", function() {mousebutton=0; $("#mb").html(mousebutton);});
+
+$(window).bind("touchstart", function() {mousebutton=1; $("#mb").html(mousebutton);});
+$(window).bind("touchend", function() {mousebutton=0; $("#mb").html(mousebutton);});
+
 
 $("#grid td").mouseenter( function() { draw(this);} );
-$("#grid td").mousedown( function() {mousebutton=1; draw(this);} );
+$("#grid td").bind("touchstart", function() {mousebutton=1; draw(this);  $("#mb").html(mousebutton);} );
+
+$("#grid").bind("touchmove", function() {drawmove(event);} );
+
 
 });
+
+function drawmove(evt) {
+  evt.preventDefault();
+  $("#mb").html(2);
+  var touches=evt.changedTouches;
+  
+  var x=touches[0].pageX-$("#grid").offset().left;
+  var y=touches[0].pageY-$("#grid").offset().top;
+  x=parseInt(x/20);
+  y=parseInt(y/20);
+  var t=$('td[data-id="'+x+'_'+y+'"]').first();
+  $("#mb").html(x+"_"+y);
+  $(t).css("background","red");   
+
+$('td#'+x+'_'+y+'').first().css("background","red");   
+
+}
 
 var mousebutton=0;
 
@@ -47,6 +71,6 @@ body {margin: 0px;}
 
 
 <body>
-
+<div id=mb>0</div>
 <div id=grid style='width: 360px; text-align: center; background: #eeeeee;'>
 </div>
